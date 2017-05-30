@@ -50,6 +50,9 @@ public class Downloader {
     public boolean download(String urlstr) throws IOException {
         URL url = new URL(urlstr);
 
+        // TODO url.getHost() が bannedDomains のどれかで終わるときに false を返す処理を入れる
+        // url.getHost().endsWith(禁止文字列)
+
         // URL を設定して HTTP 通信を開始(メソッドは GET)
         HttpURLConnection http = (HttpURLConnection) url.openConnection();
         http.setRequestMethod("GET");
