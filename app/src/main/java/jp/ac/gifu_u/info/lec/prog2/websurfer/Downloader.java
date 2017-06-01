@@ -1,13 +1,11 @@
 package jp.ac.gifu_u.info.lec.prog2.websurfer;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 
 public class Downloader {
 
@@ -15,7 +13,7 @@ public class Downloader {
     private String content = null;
 
     // ダウンロード禁止ドメインのリストを保持する。
-    private ArrayList<String> bannedDomains = new ArrayList<>();
+    private List<String> bannedDomains = new ArrayList<>();
 
     /**
      * 直前のダウンロードが成功していればダウンロードした内容を、失敗していれば null を返す
@@ -53,27 +51,23 @@ public class Downloader {
         // TODO url.getHost() が bannedDomains のどれかで終わるときに false を返す処理を入れる
         // url.getHost().endsWith(禁止文字列)
 
-        // URL を設定して HTTP 通信を開始(メソッドは GET)
+        // URL を設定して HTTP 通信を開始
         HttpURLConnection http = (HttpURLConnection) url.openConnection();
-        http.setRequestMethod("GET");
-        http.connect();
 
         // 受信したデータを読み出すためのストリームをオープン
-        String text = "";
-        BufferedReader reader = new BufferedReader(new InputStreamReader(http.getInputStream(), "UTF-8"));
+        Scanner scanner = new Scanner(http.getInputStream(), "UTF-8");
 
-        // ストリームからデータを読み出し
-        while (true) {
-            String str = reader.readLine();
-            if (str == null) {
-                break;
-            } else {
-                text += str;
-            }
+        // スキャナーからデータを読み出し
+        String text = "";
+        while (scanner.hasNextLine()) {
+            text += scanner.nextLine();
         }
 
         this.content = text;
+
+        scanner.close();
+        http.disconnect();
+
         return true;
     }
-
 }
